@@ -1,5 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Setup
+
+Before running the project, configure your environment variables:
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Update `.env.local` with your Notion credentials:
+   - `NOTION_TOKEN`: Create an integration at [Notion Integrations](https://www.notion.so/my-integrations)
+   - `NOTION_TEAM_DB_ID`: The ID of your Notion database containing team members
+
 ## Getting Started
 
 First, run the development server:

@@ -10,6 +10,9 @@ import Team from "./Components/Team/Team";
 import Connect from "./Components/Connect/Connect";
 import Footer from "./Components/Footer/Footer";
 import Achievements from "./Components/Achievements/Achievements";
+
+export const revalidate = 3600;
+
 function App() {
 
     return (

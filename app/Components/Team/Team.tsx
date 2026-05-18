@@ -1,163 +1,108 @@
-﻿import line from "./assets/line.png";
-import line2 from "./assets/line2.png";
-import data from "../../../data.json";
+import { getTeamFromNotion, type TeamMember } from "@/lib/notion-team";
 
-const Team = () => {
-  // Desktop styles
-  const teamCardBase = "flex items-center justify-center flex-col gap-[20px] absolute h-[20rem] w-[15rem] max-[780px]:w-[12.3rem] max-[670px]:w-[10rem]";
-  const teamCardSmall = "flex items-center justify-center flex-col gap-[15px] absolute h-[16rem] w-[12rem] max-[780px]:w-[10rem] max-[670px]:w-[8.5rem]";
-  
-  // Medium screen styles
-  const teamCardMedium = "flex items-center justify-center flex-col gap-[15px] h-[16rem] w-[12rem]";
-  const imgStyleMedium = "object-contain relative align-top rounded-full h-[10rem] w-[10rem]";
-  const nameStyleMedium = "text-black flex font-bold h-fit justify-center w-fit text-[1rem]";
-  const designationStyleMedium = "flex text-[0.9rem] font-medium h-fit justify-center w-fit";
-  
-  // Mobile screen styles
-  const teamCardMobile = "flex items-center justify-center flex-col gap-[10px] h-[12rem] w-[8.5rem]";
-  const imgStyleMobile = "object-contain relative align-top rounded-full h-[7rem] w-[7rem]";
-  const nameStyleMobile = "text-black flex font-bold h-fit justify-center w-fit text-[0.8rem]";
-  const designationStyleMobile = "flex text-[0.65rem] font-medium h-fit justify-center w-fit";
-  
-  const imgContainer = "rounded-full shrink-0 flex w-full items-center justify-center";
-  const imgStyle = "object-contain relative align-top rounded-full h-[15rem] w-[15rem] max-[1200px]:h-[12rem] max-[1200px]:w-[12rem] max-[780px]:h-[10rem] max-[780px]:w-[10rem] max-[670px]:h-[8rem] max-[670px]:w-[8rem]";
-  const imgStyleSmall = "object-contain relative align-top rounded-full h-[12rem] w-[12rem] max-[1200px]:h-[10rem] max-[1200px]:w-[10rem] max-[780px]:h-[8.5rem] max-[780px]:w-[8.5rem] max-[670px]:h-[7rem] max-[670px]:w-[7rem]";
-  const nameContainer = "h-fit relative w-full flex flex-col items-center";
-  const nameStyle = "text-black flex font-bold h-fit justify-center w-fit text-[1.5rem] max-[780px]:text-[1rem] max-[670px]:text-[0.8rem]";
-  const nameStyleSmall = "text-black flex font-bold h-fit justify-center w-fit text-[1.2rem] max-[780px]:text-[0.9rem] max-[670px]:text-[0.7rem]";
-  const designationStyle = "flex text-[1.3rem] font-medium h-fit justify-center w-fit max-[780px]:text-[0.85rem] max-[670px]:text-[0.7rem]";
-  const designationStyleSmall = "flex text-[1rem] font-medium h-fit justify-center w-fit max-[780px]:text-[0.7rem] max-[670px]:text-[0.6rem]";
+// Order within the Leads section (campus-level first)
+const CAMPUS_POSITION_ORDER = ["Campus Lead", "Campus Co-lead", "Mentor"];
 
-  // Desktop layout: 4 + 5
-  const members = [
-    { data: data.team.campusLead, title: "Campus Lead", style: { marginTop: "-30px", top: "0", left: "5%" }, isSmall: false },
-    { data: data.team.campusCoLead, title: "Campus Co-Lead", style: { marginTop: "-50px", top: "0", left: "28%" }, isSmall: false },
-    { data: data.team.igLead, title: "IG Manager", style: { marginTop: "-60px", top: "0", left: "50%" }, isSmall: false },
-    { data: data.team.operationLead, title: "Operation Lead", style: { marginTop: "-10px", top: "0", left: "74%" }, isSmall: false },
-    { data: data.team.technicalLead, title: "Technical Lead", style: { marginTop: "350px", top: "100%", left: "2%" }, isSmall: true },
-    { data: data.team.mediaLead, title: "Creative Lead", style: { marginTop: "380px", top: "100%", left: "22%" }, isSmall: true },
-    { data: data.team.marketingLead, title: "Marketing Lead", style: { marginTop: "380px", top: "100%", left: "42%" }, isSmall: true },
-    { data: data.team.communityLead, title: "Community Lead", style: { marginTop: "380px", top: "100%", left: "62%" }, isSmall: true },
-    { data: data.team.contentLead, title: "Content Lead", style: { marginTop: "380px", top: "100%", left: "82%" }, isSmall: true },
-  ];
+const Team = async () => {
+  const raw = await getTeamFromNotion();
 
-  // Medium layout: 3 + 3 + 3
-  const membersMedium = [
-    { data: data.team.campusLead, title: "Campus Lead", row: 0 },
-    { data: data.team.campusCoLead, title: "Campus Co-Lead", row: 0 },
-    { data: data.team.igLead, title: "IG Manager", row: 0 },
-    { data: data.team.operationLead, title: "Operation Lead", row: 1 },
-    { data: data.team.technicalLead, title: "Technical Lead", row: 1 },
-    { data: data.team.mediaLead, title: "Creative Lead", row: 1 },
-    { data: data.team.marketingLead, title: "Marketing Lead", row: 2 },
-    { data: data.team.communityLead, title: "Community Lead", row: 2 },
-    { data: data.team.contentLead, title: "Content Lead", row: 2 },
-  ];
+  if (!raw || raw.length === 0) return null;
 
-  // Mobile layout: 2 + 2 + 2 + 3
-  const membersMobile = [
-    { data: data.team.campusLead, title: "Campus Lead", row: 0 },
-    { data: data.team.campusCoLead, title: "Campus Co-Lead", row: 0 },
-    { data: data.team.igLead, title: "IG Manager", row: 1 },
-    { data: data.team.operationLead, title: "Operation Lead", row: 1 },
-    { data: data.team.technicalLead, title: "Technical Lead", row: 2 },
-    { data: data.team.mediaLead, title: "Creative Lead", row: 2 },
-    { data: data.team.marketingLead, title: "Marketing Lead", row: 3 },
-    { data: data.team.communityLead, title: "Community Lead", row: 3 },
-    { data: data.team.contentLead, title: "Content Lead", row: 4 },
-  ];
+  // ── Leads section ────────────────────────────────────────────
+  // Campus Lead / Campus Co-lead / Mentor first, then remaining Leads by team
+  const campusLeads = CAMPUS_POSITION_ORDER.flatMap((pos) =>
+    raw.filter((m) => m.position === pos),
+  );
+  const otherLeads = raw
+    .filter((m) => m.position === "Lead")
+    .sort((a, b) => (a.team ?? "").localeCompare(b.team ?? ""));
+  const leadsSection = [...campusLeads, ...otherLeads];
+
+  // ── Team sections (Co-leads grouped by team, Lead included) ──
+  const teamMap = new Map<string, { lead: TeamMember | null; coleads: TeamMember[] }>();
+  for (const m of raw) {
+    if (!m.team) continue;
+    if (m.position !== "Lead" && m.position !== "Colead") continue;
+    if (!teamMap.has(m.team)) teamMap.set(m.team, { lead: null, coleads: [] });
+    const entry = teamMap.get(m.team)!;
+    if (m.position === "Lead") entry.lead = m;
+    else entry.coleads.push(m);
+  }
+
+  // Only show team sections that actually have co-leads
+  const teamSections = [...teamMap.entries()]
+    .filter(([, { coleads }]) => coleads.length > 0)
+    .sort(([a], [b]) => a.localeCompare(b));
+
+  // ── Styles ───────────────────────────────────────────────────
+  const cardShell =
+    "group flex h-full flex-col items-center rounded-[28px] border border-[#eadcf7] bg-white/85 p-[22px] text-center shadow-[0_18px_45px_rgba(58,16,93,0.08)] backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_22px_55px_rgba(58,16,93,0.12)]";
+  const photoShell =
+    "flex h-[132px] w-[132px] items-center justify-center rounded-full bg-gradient-to-br from-[#f8efff] via-white to-[#f3e7ff] p-[6px] ring-1 ring-[#efe2fb] max-[768px]:h-[118px] max-[768px]:w-[118px]";
+  const photoImg =
+    "h-full w-full rounded-full object-cover ring-4 ring-white shadow-[0_12px_28px_rgba(173,88,255,0.14)]";
+
+  const TeamCard = ({ member }: { member: TeamMember }) => (
+    <div className={cardShell}>
+      <div className={photoShell}>
+        <img className={photoImg} src={member.image} alt={member.name} loading="lazy" />
+      </div>
+      <p className="mt-[18px] text-[1.05rem] font-semibold tracking-tight text-[#111827]">{member.name}</p>
+      <span className="mt-[8px] inline-flex rounded-full bg-[#f7efff] px-[14px] py-[5px] text-[0.78rem] font-semibold text-[#ad58ff]">
+        {member.position}
+      </span>
+      {member.team && (
+        <span className="mt-[4px] text-[0.75rem] text-[#6b7280]">{member.team}</span>
+      )}
+    </div>
+  );
+
+  const SectionHeading = ({ label }: { label: string }) => (
+    <div className="mb-5 flex items-center gap-4">
+      <h2 className="shrink-0 text-[1.1rem] font-semibold text-[#111827]">{label}</h2>
+      <div className="h-px flex-1 bg-gradient-to-r from-[#eadcf7] to-transparent" />
+    </div>
+  );
 
   return (
-    <div className="flex flex-col items-center justify-center gap-[100px] w-full min-h-[700px] mt-[3vh] max-[1200px]:mt-[50px] max-[670px]:mt-[50px]" id="team">
-      <h1 className="text-[#ad58ff] text-[2.5rem] mt-[30px] font-bold max-[1200px]:text-[2rem]">Our Team</h1>
-      
-      {/* Desktop Layout: 4 + 5 */}
-      <div className="relative h-[85vh] min-h-[650px] max-[1500px]:h-[95vh] max-[1500px]:-mb-[40px] max-[1200px]:hidden max-[900px]:h-[85vh] max-[900px]:-mb-[100px] max-[900px]:z-0 max-[780px]:h-[100vh] max-[780px]:-mb-[120px] max-[670px]:h-[180vh] max-[670px]:-mb-[100px] w-full">
-        <div className="w-full relative flex flex-col gap-[260px] max-[1500px]:gap-[240px] max-[1200px]:gap-[260px] max-[780px]:gap-[220px] max-[670px]:gap-[200px]">
-          <img className="w-full h-auto block" src={line.src} alt="" loading="lazy" />
-          <img className="w-full h-auto block max-[670px]:hidden" src={line2.src} alt="" loading="lazy" />
-          <img className="w-full h-auto hidden max-[1200px]:block max-[670px]:!hidden" src={line.src} alt="" loading="lazy" />
-          <img className="w-full h-auto hidden" src={line2.src} alt="" loading="lazy" />
-          <img className="w-full h-auto block" src={line.src} alt="" loading="lazy" />
-        </div>
-        <div className="flex flex-wrap absolute top-0 items-center justify-center w-full">
-          {members.map((member, i) => (
-            <div key={i} className={member.isSmall ? teamCardSmall : teamCardBase} style={member.style}>
-              <div className={imgContainer}>
-                <img className={member.isSmall ? imgStyleSmall : imgStyle} src={member.data.image} loading="lazy" />
-              </div>
-              <div className={nameContainer}>
-                <div className={member.isSmall ? nameStyleSmall : nameStyle}>{member.data.name}</div>
-                <div className={member.isSmall ? designationStyleSmall : designationStyle} style={{ color: "#ad58ff", top: "2rem" }}>
-                  {member.title}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="flex w-full flex-col items-center justify-center gap-12 px-4.5 py-12 sm:px-7 lg:px-11" id="team">
+
+      {/* Page header */}
+      <div className="flex max-w-230 flex-col items-center gap-3.5 text-center">
+        <p className="text-[0.78rem] font-semibold uppercase tracking-[0.35em] text-[#ad58ff]">Our Team</p>
+        <h1 className="text-[clamp(2rem,4vw,3.2rem)] font-bold tracking-tight text-[#111827]">
+          Leads organized for clear ownership and strong execution
+        </h1>
+        <p className="max-w-190 text-[0.98rem] leading-[1.75] text-[#5b5f6a] max-[640px]:text-[0.92rem]">
+          A structured view of the campus leadership team and the functional leads who keep MuLearn moving.
+        </p>
       </div>
 
-      {/* Medium Layout: 3x3 with lines */}
-      <div className="hidden max-[1200px]:flex max-[670px]:hidden flex-col items-center justify-center gap-[60px] w-full">
-        {[0, 1, 2].map((rowIndex) => (
-          <div key={rowIndex} className="flex flex-col items-center justify-center w-full">
-            {/* Line image */}
-            <img 
-              className="w-full h-auto mb-[30px]" 
-              src={rowIndex === 1 ? line2.src : line.src} 
-              alt="" 
-              loading="lazy" 
-            />
-            {/* Team members in row */}
-            <div className="flex items-center justify-center gap-[50px] w-full px-[20px]">
-              {membersMedium.filter(m => m.row === rowIndex).map((member, i) => (
-                <div key={i} className={teamCardMedium} style={{ marginTop: "-150px" }}>
-                  <div className={imgContainer}>
-                    <img className={imgStyleMedium} src={member.data.image} loading="lazy" />
-                  </div>
-                  <div className={nameContainer}>
-                    <div className={nameStyleMedium}>{member.data.name}</div>
-                    <div className={designationStyleMedium} style={{ color: "#ad58ff" }}>
-                      {member.title}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* Leads section */}
+      {leadsSection.length > 0 && (
+        <section className="w-full max-w-310">
+          <SectionHeading label="Leads" />
+          <div className="grid grid-cols-2 gap-4 sm:gap-5.5 lg:grid-cols-3 xl:grid-cols-4">
+            {leadsSection.map((member) => (
+              <TeamCard key={`lead-${member.name}`} member={member} />
+            ))}
           </div>
-        ))}
-      </div>
+        </section>
+      )}
 
-      {/* Mobile Layout: 2+2+2+3 with lines */}
-      <div className="hidden max-[670px]:flex flex-col items-center justify-center gap-[40px] w-full">
-        {[0, 1, 2, 3 ,4].map((rowIndex) => (
-          <div key={rowIndex} className="flex flex-col items-center justify-center w-full">
-            {/* Line image */}
-            <img 
-              className="w-full h-auto mb-[3px]" 
-              src={rowIndex === 3||rowIndex === 1 ? line2.src : line.src} 
-              alt="" 
-              loading="lazy" 
-            />
-            {/* Team members in row */}
-            <div className="flex items-center justify-center gap-[95px] w-full px-[15px] flex-wrap">
-              {membersMobile.filter(m => m.row === rowIndex).map((member, i) => (
-                <div key={i} className={teamCardMobile} style={{ marginTop: "-90px" }}>
-                  <div className={imgContainer}>
-                    <img className={imgStyleMobile} src={member.data.image} loading="lazy" />
-                  </div>
-                  <div className={nameContainer}>
-                    <div className={nameStyleMobile}>{member.data.name}</div>
-                    <div className={designationStyleMobile} style={{ color: "#ad58ff" }}>
-                      {member.title}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* Team sections: one per team, Lead + Co-leads together */}
+      {teamSections.map(([teamName, { lead, coleads }]) => (
+        <section key={teamName} className="w-full max-w-310">
+          <SectionHeading label={teamName} />
+          <div className="grid grid-cols-2 gap-4 sm:gap-5.5 lg:grid-cols-3 xl:grid-cols-4">
+            {lead && <TeamCard key={`${teamName}-lead`} member={lead} />}
+            {coleads.map((member) => (
+              <TeamCard key={`${teamName}-colead-${member.name}`} member={member} />
+            ))}
           </div>
-        ))}
-      </div>
+        </section>
+      ))}
+
     </div>
   );
 };
