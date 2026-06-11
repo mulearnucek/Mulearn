@@ -32,7 +32,7 @@
       "month": "Sep",
       "date": "07",
       "head": "ERROR_418",
-      "para": "24 hour hackathon organised by MulearnUcek", 
+      "para": "24 hour hackathon organised by MulearnUcek",
       "img": "mulearn-assets/events/error418.jpg"
     },
     {
@@ -42,14 +42,13 @@
       "para": "Organized by MulearnUcek",
       "img": "mulearn-assets/events/gamedev.jpg"
     },
-        {
+    {
       "month": "July",
       "date": "03",
       "head": "Dev Expo",
       "para": "Organized by MulearnUcek",
       "img": "mulearn-assets/events/devexpo.jpg"
     }
-
   ],
 
   "gallery": {
@@ -91,45 +90,6 @@
     "InterestGroups": 5,
     "karmaEarned": 354.24,
     "rank": 8
-  },
-
-  "team": {
-    "campusLead": {
-      "name": "Amarnath Sujith",
-      "image": "mulearn-assets/team/Amarnath.jpg"
-    },
-    "campusCoLead": {
-      "name": "Chethas L Pramod",
-      "image": "mulearn-assets/team/Chethas.png"
-    },
-    "igLead": {
-      "name": "Arjun TK",
-      "image": "mulearn-assets/team/Arjun TK.jpg"
-    },
-    "technicalLead": {
-      "name": "Richard S",
-      "image": "mulearn-assets/team/Richard.jpg"
-    },
-    "mediaLead": {
-      "name": "Bhagyasree",
-      "image": "mulearn-assets/team/Bhagyashree.jpg"
-    },
-    "marketingLead": {
-      "name": "Sooryakanth S",
-      "image": "mulearn-assets/team/Sooryakanth.jpg"
-    },
-    "operationLead": {
-      "name": "Aadil Mohamed A",
-      "image": "mulearn-assets/team/Aadil.jpg"
-    },
-    "communityLead": {
-      "name": "Aswath S A",
-      "image": "mulearn-assets/team/Ashwath.jpg"
-    },
-    "contentLead": {
-      "name": "Mihirima A R",
-      "image": "mulearn-assets/team/Mihirima.jpg"
-    }
   },
 
   "discordLink": "https://discord.gg/GgZCqppkJF",
