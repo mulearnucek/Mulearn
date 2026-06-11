@@ -1,26 +1,46 @@
 @import "tailwindcss";
 
 * {
-  scroll-behavior: smooth;
-  box-sizing: border-box;
-  font-family: "Plus Jakarta Sans";
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+    font-family: var(--font-plus-jakarta), sans-serif;
 }
 
 ::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
-  background-color: #ffffff;
+    width: 0px;
+    height: 0px;
+    background-color: #ffffff;
 }
 
 a {
-  text-decoration: none;
-  cursor: pointer;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .appWrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.animate-shimmer {
+    background: linear-gradient(
+        90deg,
+        rgba(229, 231, 235, 1) 0%,
+        rgba(243, 244, 246, 1) 50%,
+        rgba(229, 231, 235, 1) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
 }
