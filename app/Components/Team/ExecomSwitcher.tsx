@@ -49,9 +49,7 @@ export default function ExecomSwitcher({
             return (
               <button
                 key={ex.id}
-                onClick={() =>
-                  router.push(`?execom=${ex.id}`, { scroll: false })
-                }
+                onClick={() => router.push(`?execom=${ex.id}`)}
                 className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
                   isActive
                     ? "bg-[#ad58ff] text-white shadow-md scale-105"
