@@ -213,9 +213,9 @@ export default async function MemberProfilePage(props: {
                 <div className="mt-20 pt-10 border-t border-gray-200/60 space-y-4">
                   {member.muid && (
                     <div className="flex items-center justify-between p-5 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                      <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
-                        μID
-                      </span>
+                      <span className="text-[10px] font-black text-gray-300 tracking-[0.3em]">
+                          μID
+                        </span>
                       <span className="text-sm font-black text-gray-800 tabular-nums">
                         {member.muid}
                       </span>
