@@ -1,4 +1,5 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 
 export type Execom = {
   id: string;
@@ -149,139 +150,146 @@ function parseMember(page: NotionPage): TeamMember | null {
   };
 }
 
-export async function getExecomsFromNotion(): Promise<Execom[] | null> {
-  const token = process.env.NOTION_TOKEN;
-  const databaseId = process.env.EXECOMS_DB_ID;
+export const getExecomsFromNotion = unstable_cache(
+  async (): Promise<Execom[] | null> => {
+    const token = process.env.NOTION_TOKEN;
+    const databaseId = process.env.EXECOMS_DB_ID;
 
-  if (!token || !databaseId) return null;
+    if (!token || !databaseId) return null;
 
-  try {
-    const response = await fetch(
-      `https://api.notion.com/v1/databases/${databaseId}/query`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Notion-Version": "2022-06-28",
-          "Content-Type": "application/json",
+    try {
+      const response = await fetch(
+        `https://api.notion.com/v1/databases/${databaseId}/query`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Notion-Version": "2022-06-28",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            page_size: 100,
+            sorts: [{ property: "Year", direction: "descending" }],
+          }),
         },
-        body: JSON.stringify({
-          page_size: 100,
-          sorts: [{ property: "Year", direction: "descending" }],
-        }),
-        next: { revalidate: 0 },
-      },
-    );
+      );
 
-    if (!response.ok) return null;
+      if (!response.ok) return null;
 
-    const payload = (await response.json()) as NotionQueryResponse;
+      const payload = (await response.json()) as NotionQueryResponse;
 
-    return payload.results
-      .filter(isNotionPage)
-      .map((page) => {
-        const p = page.properties;
-        const name = getText(p["Name"]);
-        if (!name) return null;
-        return {
-          id: page.id,
-          name,
-          status: getText(p["Status"]),
-          year: getText(p["Year"]),
-        };
-      })
-      .filter((e): e is Execom => e !== null);
-  } catch (error) {
-    console.error("[Notion] Error fetching execoms:", error);
-    return null;
-  }
-}
+      return payload.results
+        .filter(isNotionPage)
+        .map((page) => {
+          const p = page.properties;
+          const name = getText(p["Name"]);
+          if (!name) return null;
+          return {
+            id: page.id,
+            name,
+            status: getText(p["Status"]),
+            year: getText(p["Year"]),
+          };
+        })
+        .filter((e): e is Execom => e !== null);
+    } catch (error) {
+      console.error("[Notion] Error fetching execoms:", error);
+      return null;
+    }
+  },
+  ["execoms"],
+  { revalidate: 3600 },
+);
 
-async function fetchAllMembers(): Promise<TeamMember[]> {
-  const token = process.env.NOTION_TOKEN;
-  const databaseId = process.env.MEMBERS_DB_ID;
+const fetchAllMembers = unstable_cache(
+  async (): Promise<TeamMember[]> => {
+    const token = process.env.NOTION_TOKEN;
+    const databaseId = process.env.MEMBERS_DB_ID;
 
-  if (!token || !databaseId) return [];
+    if (!token || !databaseId) return [];
 
-  try {
-    const response = await fetch(
-      `https://api.notion.com/v1/databases/${databaseId}/query`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Notion-Version": "2022-06-28",
-          "Content-Type": "application/json",
+    try {
+      const response = await fetch(
+        `https://api.notion.com/v1/databases/${databaseId}/query`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Notion-Version": "2022-06-28",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ page_size: 100 }),
         },
-        body: JSON.stringify({ page_size: 100 }),
-        next: { revalidate: 0 },
-      },
-    );
+      );
 
-    if (!response.ok) return [];
+      if (!response.ok) return [];
 
-    const payload = (await response.json()) as NotionQueryResponse;
+      const payload = (await response.json()) as NotionQueryResponse;
 
-    return payload.results
-      .filter(isNotionPage)
-      .map(parseMember)
-      .filter((m): m is TeamMember => m !== null);
-  } catch (error) {
-    console.error("[Notion] Error fetching all members:", error);
-    return [];
-  }
-}
+      return payload.results
+        .filter(isNotionPage)
+        .map(parseMember)
+        .filter((m): m is TeamMember => m !== null);
+    } catch (error) {
+      console.error("[Notion] Error fetching all members:", error);
+      return [];
+    }
+  },
+  ["all-members"],
+  { revalidate: 3600 },
+);
 
-async function fetchMemberships(
-  filter: Record<string, unknown>,
-): Promise<Membership[]> {
-  const token = process.env.NOTION_TOKEN;
-  const databaseId =
-    process.env.EXECOM_MEMBERSHIPS_DB_ID ||
-    "6523f2af-ecc5-4d00-845d-cc1c3a3320f4";
+const fetchMemberships = unstable_cache(
+  async (filter: Record<string, unknown>): Promise<Membership[]> => {
+    const token = process.env.NOTION_TOKEN;
+    const databaseId =
+      process.env.EXECOM_MEMBERSHIPS_DB_ID ||
+      "6523f2af-ecc5-4d00-845d-cc1c3a3320f4";
 
-  if (!token || !databaseId) return [];
+    if (!token || !databaseId) return [];
 
-  try {
-    const response = await fetch(
-      `https://api.notion.com/v1/databases/${databaseId}/query`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Notion-Version": "2022-06-28",
-          "Content-Type": "application/json",
+    try {
+      const response = await fetch(
+        `https://api.notion.com/v1/databases/${databaseId}/query`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Notion-Version": "2022-06-28",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ filter, page_size: 100 }),
         },
-        body: JSON.stringify({ filter, page_size: 100 }),
-        next: { revalidate: 0 },
-      },
-    );
+      );
 
-    if (!response.ok) return [];
+      if (!response.ok) return [];
 
-    const payload = (await response.json()) as NotionQueryResponse;
+      const payload = (await response.json()) as NotionQueryResponse;
 
-    return payload.results
-      .filter(isNotionPage)
-      .map((page) => {
-        const p = page.properties;
-        const memberIds = getRelationIds(p["Member"]);
-        const execomIds = getRelationIds(p["Execom"]);
-        if (memberIds.length === 0 || execomIds.length === 0) return null;
+      return payload.results
+        .filter(isNotionPage)
+        .map((page) => {
+          const p = page.properties;
+          const memberIds = getRelationIds(p["Member"]);
+          const execomIds = getRelationIds(p["Execom"]);
+          if (memberIds.length === 0 || execomIds.length === 0) return null;
 
-        return {
-          memberId: memberIds[0],
-          execomId: execomIds[0],
-          team: getText(p["Team"]),
-          position: getText(p["Position"]),
-        };
-      })
-      .filter((m): m is Membership => m !== null);
-  } catch (error) {
-    console.error("[Notion] Error fetching memberships:", error);
-    return [];
-  }
-}
+          return {
+            memberId: memberIds[0],
+            execomId: execomIds[0],
+            team: getText(p["Team"]),
+            position: getText(p["Position"]),
+          };
+        })
+        .filter((m): m is Membership => m !== null);
+    } catch (error) {
+      console.error("[Notion] Error fetching memberships:", error);
+      return [];
+    }
+  },
+  ["memberships"],
+  { revalidate: 3600 },
+);
 
 export async function getExecomMembersFromNotion(
   execomId: string,

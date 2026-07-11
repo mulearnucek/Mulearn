@@ -6,7 +6,7 @@ import { FaLinkedin, FaInstagram, FaGithub } from "react-icons/fa";
 import Link from "next/link";
 import FadeInImage from "../../Components/Team/FadeInImage";
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 export default async function MemberProfilePage(props: {
   params: Promise<{ username: string }>;
@@ -54,6 +54,7 @@ export default async function MemberProfilePage(props: {
                   alt={member.name}
                   containerClassName="h-44 w-44 rounded-[2.8rem] ring-8 ring-gray-50 shadow-md"
                   className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
+                  priority
                 />
               </div>
 

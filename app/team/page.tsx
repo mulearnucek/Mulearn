@@ -3,7 +3,7 @@ import Team from "../Components/Team/Team";
 import Footer from "../Components/Footer/Footer";
 import { getExecomsFromNotion } from "@/lib/notion-team";
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 export default async function TeamPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
