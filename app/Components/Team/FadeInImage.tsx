@@ -38,8 +38,8 @@ export default function FadeInImage({
         fill
         priority={priority}
         unoptimized={isRemoteSigned}
-        className={`${className} transition-all duration-1000 ease-in-out ${
-          isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-[1.02]"
+        className={`${className} transition-opacity duration-300 ease-out ${
+          isLoaded ? "opacity-100" : "opacity-0"
         }`}
         onLoad={() => setIsLoaded(true)}
         onError={() => {
