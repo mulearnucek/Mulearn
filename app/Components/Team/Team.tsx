@@ -171,7 +171,7 @@ const Team = async ({
 
               {/* Detailed Team Sections */}
               {teamSections.map(([teamName, { lead, coleads }]) => (
-                <section key={teamName} className="w-full mb-32">
+                <section key={teamName} className="w-full mb-12">
                   <SectionTitle label={`${teamName} Team`} />
                   <div className="flex flex-wrap justify-center gap-x-8 gap-y-16">
                     {lead && (
