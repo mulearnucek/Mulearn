@@ -1,4 +1,4 @@
-import { getMemberByUsername } from "@/lib/notion-team";
+import { getMemberByUsername, type MemberRole } from "@/lib/notion-team";
 import { notFound } from "next/navigation";
 import Navbar from "../../Components/Navbar/Navbar";
 import Footer from "../../Components/Footer/Footer";
@@ -6,7 +6,49 @@ import { FaLinkedin, FaInstagram, FaGithub } from "react-icons/fa";
 import Link from "next/link";
 import FadeInImage from "../../Components/Team/FadeInImage";
 
-export const revalidate = 0;
+export const revalidate = 3600;
+
+type GroupedRole = {
+  position: string | null;
+  team: string | null;
+  execomName: string;
+  execomYearLabel: string;
+  count: number;
+};
+
+function groupRoles(roles: MemberRole[]): GroupedRole[] {
+  if (roles.length === 0) return [];
+
+  const groups: GroupedRole[] = [];
+  let startIdx = 0;
+
+  for (let i = 1; i <= roles.length; i++) {
+    const isLast = i === roles.length;
+    const sameAsNext =
+      !isLast &&
+      roles[i].position === roles[i - 1].position &&
+      roles[i].team === roles[i - 1].team;
+
+    if (isLast || !sameAsNext) {
+      const count = i - startIdx;
+      const earliest = roles[i - 1];
+      const latest = roles[startIdx];
+
+      groups.push({
+        position: latest.position,
+        team: latest.team,
+        execomName: latest.execomName,
+        execomYearLabel:
+          count > 1
+            ? `${earliest.execomYear || "Current"} → ${latest.execomYear || "Current"}`
+            : latest.execomYear || "Current",
+        count,
+      });
+      startIdx = i;
+    }
+  }
+  return groups;
+}
 
 export default async function MemberProfilePage(props: {
   params: Promise<{ username: string }>;
@@ -20,7 +62,7 @@ export default async function MemberProfilePage(props: {
     notFound();
   }
 
-  const memberRoles = member.roles || [];
+  const groupedRoles = groupRoles(member.roles || []);
 
   return (
     <main className="appWrapper min-h-screen justify-start! bg-gray-50 text-gray-900">
@@ -54,6 +96,7 @@ export default async function MemberProfilePage(props: {
                   alt={member.name}
                   containerClassName="h-44 w-44 rounded-[2.8rem] ring-8 ring-gray-50 shadow-md"
                   className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
+                  priority
                 />
               </div>
 
@@ -126,26 +169,33 @@ export default async function MemberProfilePage(props: {
               </div>
 
               <div className="space-y-10">
-                {memberRoles.length > 0 ? (
-                  memberRoles.map((role, idx) => (
+                {groupedRoles.length > 0 ? (
+                  groupedRoles.map((role, idx) => (
                     <div key={idx} className="relative pl-10 group">
                       {/* Timeline Line */}
                       <div className="absolute left-0 top-0 bottom-0 w-px bg-gray-200 group-last:bg-transparent"></div>
                       {/* Timeline Dot */}
                       <div className="absolute -left-1.25 top-2 h-2.5 w-2.5 rounded-full border-2 border-white bg-gray-300 group-hover:bg-[#ad58ff] group-hover:scale-125 transition-all shadow-sm"></div>
 
-                      <div className="space-y-1.5">
-                        <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest tabular-nums">
-                          {role.execomYear || "Current"}
-                        </span>
-                        <h4 className="text-xl font-black text-gray-900 group-hover:text-[#ad58ff] transition-colors leading-tight">
-                          {role.position}
-                        </h4>
-                        <p className="text-[13px] text-gray-500 font-bold uppercase tracking-wide">
-                          {role.team && role.team !== "μ" && role.team !== "MU"
-                            ? role.team
-                            : role.execomName}
-                        </p>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="space-y-1.5">
+                          <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest tabular-nums">
+                            {role.execomYearLabel}
+                          </span>
+                          <h4 className="text-xl font-black text-gray-900 group-hover:text-[#ad58ff] transition-colors leading-tight">
+                            {role.position}
+                          </h4>
+                          <p className="text-[13px] text-gray-500 font-bold uppercase tracking-wide">
+                            {role.team && role.team !== "μ" && role.team !== "MU"
+                              ? role.team
+                              : role.execomName}
+                          </p>
+                        </div>
+                        {role.count > 1 && (
+                          <span className="shrink-0 mt-1 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#ad58ff] bg-[#ad58ff]/10 rounded-full">
+                            {role.count} yrs
+                          </span>
+                        )}
                       </div>
                     </div>
                   ))
@@ -163,9 +213,9 @@ export default async function MemberProfilePage(props: {
                 <div className="mt-20 pt-10 border-t border-gray-200/60 space-y-4">
                   {member.muid && (
                     <div className="flex items-center justify-between p-5 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                      <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
-                        μID
-                      </span>
+                      <span className="text-[10px] font-black text-gray-300 tracking-[0.3em]">
+                          μID
+                        </span>
                       <span className="text-sm font-black text-gray-800 tabular-nums">
                         {member.muid}
                       </span>
